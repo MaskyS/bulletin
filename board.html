@@ -1,7 +1,7 @@
 <title>Bulletin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Petrona:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
     color-scheme:light;
@@ -21,7 +21,7 @@
     --text:#E4E1D8; --text-2:#A3A8B4; --text-3:#6F7583; --accent:#F27B5B;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Bricolage Grotesque",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Manrope",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
   button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
@@ -29,7 +29,7 @@
   .page{max-width:1240px;margin:0 auto;padding:28px clamp(16px,3vw,32px) 56px}
 
   header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px;margin-bottom:6px}
-  h1{font-weight:700;font-size:24px;letter-spacing:-.02em;margin:0}
+  h1{font-family:"Petrona",Georgia,serif;font-weight:600;font-size:26px;letter-spacing:-.02em;margin:0}
   .dek{color:var(--text-2);margin:0;font-size:15px}
   .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:10px 0 26px;font-size:14px;color:var(--text-2)}
   .bar .at{position:relative}
@@ -47,7 +47,7 @@
   .kinds svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
   .kinds .n{opacity:.6;font-size:12px}
   .board{display:grid;grid-template-columns:1fr 1fr;gap:12px 36px;align-items:start}
-  .col h2{display:flex;align-items:baseline;gap:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--text)}
+  .col h2{display:flex;align-items:baseline;gap:10px;font-family:"Petrona",Georgia,serif;font-size:17px;font-weight:600;letter-spacing:0;color:var(--text-2);margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--text)}
   .col h2 .n{font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3)}
   .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;align-items:start}
 
@@ -74,7 +74,7 @@
   .st{font-size:12px;color:var(--text-3);display:flex;flex-wrap:wrap;gap:4px 8px}
   .st .rel{color:var(--text-2);font-weight:600}
   .detail{padding:2px 0 13px;border-top:1px solid var(--line-2);margin:0 13px}
-  .detail .text{font-family:"Newsreader",Georgia,serif;font-size:16px;line-height:1.5;color:var(--text-2);white-space:pre-wrap;margin:12px 0 10px;max-width:64ch}
+  .detail .text{font-size:15.5px;line-height:1.55;color:var(--text-2);white-space:pre-wrap;margin:12px 0 10px;max-width:64ch}
   .detail .meta{font-size:12.5px;color:var(--text-3);margin:0 0 10px}
   .detail .acts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13.5px}
   .detail .acts .act{font-weight:700;background:var(--accent);color:#fff;padding:6px 11px;border-radius:6px}
