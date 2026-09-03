@@ -1,0 +1,321 @@
+<title>The Offering Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap">
+<style>
+  :root{
+    color-scheme:light;
+    --bg:#E9E8E1; --card:#F8F7F2; --card-2:#F1F0EA; --line:rgba(27,35,54,.15); --line-2:rgba(27,35,54,.08);
+    --text:#1B2336; --text-2:#5B6274; --text-3:#8F94A3; --accent:#B8371A;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#131519; --card:#1E2128; --card-2:#252932; --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.06);
+      --text:#E4E1D8; --text-2:#A3A8B4; --text-3:#6F7583; --accent:#F27B5B;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#131519; --card:#1E2128; --card-2:#252932; --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.06);
+    --text:#E4E1D8; --text-2:#A3A8B4; --text-3:#6F7583; --accent:#F27B5B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Bricolage Grotesque",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .page{max-width:1240px;margin:0 auto;padding:28px clamp(16px,3vw,32px) 56px}
+
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px;margin-bottom:6px}
+  h1{font-weight:700;font-size:24px;letter-spacing:-.02em;margin:0}
+  .dek{color:var(--text-2);margin:0;font-size:15px}
+  .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:10px 0 26px;font-size:14px;color:var(--text-2)}
+  .bar .at{position:relative}
+  .bar .at::before{content:"@";position:absolute;left:10px;top:7px;color:var(--text-3)}
+  .bar input[type=text]{font:inherit;padding:6px 10px 6px 24px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--text);width:190px}
+  .bar label{display:flex;align-items:center;gap:6px}
+  .bar .post{flex:1 1 320px;min-width:0}
+  .bar code{font:13px ui-monospace,Menlo,monospace;background:var(--card);padding:1px 5px;border-radius:4px;color:var(--text)}
+  .bar .status{color:var(--text-3)}
+
+  .kinds{display:flex;flex-wrap:wrap;gap:6px;margin:-12px 0 22px}
+  .kinds button{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--text-2);background:var(--card)}
+  .kinds button:hover{color:var(--text)}
+  .kinds button[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .kinds svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+  .kinds .n{opacity:.6;font-size:12px}
+  .board{display:grid;grid-template-columns:1fr 1fr;gap:12px 36px;align-items:start}
+  .col h2{display:flex;align-items:baseline;gap:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--text)}
+  .col h2 .n{font-weight:500;letter-spacing:0;text-transform:none;color:var(--text-3)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;align-items:start}
+
+  .card{position:relative;min-height:152px}
+  .paper{background:var(--card);border:1px solid var(--line-2);border-radius:5px;transition:border-color .12s}
+  .paper:hover{border-color:var(--line)}
+  .card.known .paper{background:var(--card-2)}
+  .card.past{opacity:.55}
+  /* open: the paper lifts off the board and widens over its neighbours; the slot stays put */
+  .card.open{z-index:5}
+  .card.open .paper{position:absolute;top:0;left:0;width:min(calc(200% + 10px),var(--gw,100%));border-color:var(--line);box-shadow:0 14px 40px rgba(0,0,0,.28)}
+  .card.open.grow-left .paper{left:auto;right:0}
+  .hit{display:flex;flex-direction:column;gap:6px;width:100%;min-height:150px;padding:12px 13px 11px}
+  .kind{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-2)}
+  .kind svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.55;flex:none}
+  .sum{font-size:15px;font-weight:600;line-height:1.3;letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty}
+  .card.open .sum{display:block;font-size:16px}
+  .card.open .hit{min-height:0}
+  .card.open .who{margin-top:4px}
+  .who{margin-top:auto;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-2);min-width:0}
+  .who img,.who .initials{width:18px;height:18px;border-radius:50%;object-fit:cover;flex:none;background:var(--line-2)}
+  .who .initials{display:grid;place-items:center;font-size:8px;font-weight:700;color:var(--text-2)}
+  .who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .st{font-size:12px;color:var(--text-3);display:flex;flex-wrap:wrap;gap:4px 8px}
+  .st .rel{color:var(--text-2);font-weight:600}
+  .detail{padding:2px 0 13px;border-top:1px solid var(--line-2);margin:0 13px}
+  .detail .text{font-family:"Newsreader",Georgia,serif;font-size:16px;line-height:1.5;color:var(--text-2);white-space:pre-wrap;margin:12px 0 10px;max-width:64ch}
+  .detail .meta{font-size:12.5px;color:var(--text-3);margin:0 0 10px}
+  .detail .acts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13.5px}
+  .detail .acts .act{font-weight:700;background:var(--accent);color:#fff;padding:6px 11px;border-radius:6px}
+  .detail .acts .act:hover{text-decoration:none;filter:brightness(1.08)}
+  .detail .acts .flag{color:var(--text-3);margin-left:auto;font-size:12.5px}
+  .empty{color:var(--text-3);font-size:14px;padding:14px 0}
+
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--text-3);font-size:13.5px;max-width:70ch}
+  footer p{margin:0 0 8px}
+  footer .rec b{color:var(--text-2)}
+  @media (max-width:760px){.board{grid-template-columns:1fr}.bar input[type=text]{width:100%}.bar .at{flex:1 1 100%}}
+</style>
+
+<div class="page">
+  <header>
+    <h1>The Offering Board</h1>
+    <p class="dek">What Community Archive members have offered each other, and asked for.</p>
+  </header>
+  <div class="bar">
+    <span class="at"><input id="me" type="text" placeholder="your handle" autocomplete="off" spellcheck="false" aria-label="Your handle"></span>
+    <span class="status" id="status"></span>
+    <label><input type="checkbox" id="past"> Show past</label>
+    <span class="post">To put something up, tweet it starting with <code>offer:</code> or <code>ask:</code>, or say <code>standing offer</code>. It appears within a day.</span>
+  </div>
+
+  <div class="kinds" id="kinds" role="group" aria-label="Filter by kind"></div>
+
+  <div class="board">
+    <section class="col" aria-labelledby="h-offer"><h2 id="h-offer">Offered <span class="n" id="n-offer"></span></h2><div class="cards" id="c-offer"></div></section>
+    <section class="col" aria-labelledby="h-ask"><h2 id="h-ask">Wanted <span class="n" id="n-ask"></span></h2><div class="cards" id="c-ask"></div></section>
+  </div>
+
+  <footer>
+    <p class="rec" id="record" hidden></p>
+    <p>Every notice is a real tweet by a member of the archive. Open it before you act on it.
+      Nothing is posted or sent on anyone's behalf; "answered" and "taken up" count public
+      replies and quotes by members. Relationships come from the follow lists in members' own
+      archive uploads. A wrong label can be reported from any notice.</p>
+    <p id="gen"></p>
+  </footer>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("data").textContent);
+  var N = (D.notices || []).filter(function (n) { return n.member !== false; }), M = D.members || [], A = D.authors || {};
+  var KIND = {}; (D.kinds || []).forEach(function (k) { KIND[k.id] = k.label; });
+  // readable label per kind, by side, plus a pale line icon
+  var LABEL = {
+    help: ["Help", "Help wanted"], feedback: ["Feedback", "Feedback wanted"], intro: ["Intro", "Intro wanted"],
+    free: ["Free session", "Free session wanted"], invite: ["Invitation", "Company wanted"], opportunity: ["Open role", "Looking for someone"]
+  };
+  var ICON = {
+    help: '<circle cx="8" cy="8" r="6.3"/><path d="M8 5v6M5 8h6"/>',
+    feedback: '<path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/>',
+    intro: '<circle cx="5.5" cy="6" r="2.1"/><circle cx="10.8" cy="6.6" r="1.8"/><path d="M1.8 13c0-2.2 1.7-3.4 3.7-3.4s3.7 1.2 3.7 3.4M9.6 12.6c.2-1.7 1.3-2.6 2.6-2.6 1 0 1.8.5 2.2 1.4"/>',
+    free: '<rect x="2" y="6.8" width="12" height="7" rx="1"/><path d="M2 9.6h12M8 6.8v7M8 6.8c-1.8 0-3.6-.9-3.6-2.4s2.2-1.9 3.6 2.4c1.4-4.3 3.6-3.9 3.6-2.4S9.8 6.8 8 6.8z"/>',
+    invite: '<rect x="2" y="3.6" width="12" height="10.4" rx="1"/><path d="M2 7h12M5.2 2.2v2.6M10.8 2.2v2.6"/>',
+    opportunity: '<rect x="2" y="5.2" width="12" height="8.4" rx="1"/><path d="M6 5.2V3.6h4v1.6M2 9h12"/>'
+  };
+  var TODAY = new Date().toISOString().slice(0, 10);
+  var ACTION = { dm: "DM @{h} on X", reply: "Reply on X", link: "Open the tweet", like: "Like the tweet" };
+  var memberByHandle = {}; M.forEach(function (m, i) { memberByHandle[m[1].toLowerCase()] = i; });
+  var issueBase = "https://github.com/" + ((D.source || {}).labels_repo || "TheExGenesis/community-archive") + "/issues/new";
+
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (a) {
+      if (a === "text") n.textContent = attrs[a];
+      else if (a === "html") n.innerHTML = attrs[a];
+      else if (a.slice(0, 2) === "on") n.addEventListener(a.slice(2), attrs[a]);
+      else n.setAttribute(a, attrs[a]);
+    });
+    (kids || []).forEach(function (k) { if (k) n.appendChild(typeof k === "string" ? document.createTextNode(k) : k); });
+    return n;
+  }
+  function icon(kind) {
+    var s = el("span");
+    s.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true">' + (ICON[kind] || ICON.help) + "</svg>";
+    return s.firstChild;
+  }
+  function fmt(iso, year) {
+    var o = { month: "short", day: "numeric", timeZone: "UTC" }; if (year) o.year = "numeric";
+    return iso ? new Date(iso).toLocaleDateString("en-US", o) : "";
+  }
+  function isPast(n) { return !n.standing && !!n.expires_at && n.expires_at < TODAY; }
+  function openness(n) {
+    if (n.standing) return "standing";
+    if (!n.expires_at) return "";
+    return n.expires_at < TODAY ? "ended " + fmt(n.expires_at) : "until " + fmt(n.expires_at);
+  }
+  function uptakeShort(n) {
+    var u = n.uptake || {}, k = (u.replies || 0) + (u.quotes || 0);
+    return k ? (n.side === "ask" ? "answered " : "taken up ") + k + "×" : "";
+  }
+
+  var me = null;
+  function rel(n) {
+    var h = n.author.handle.toLowerCase(), a = A[h] || { followers: [], following: [] };
+    if (me === null) return { ring: 3, label: "" };
+    var ai = memberByHandle[h];
+    if (ai === me) return { ring: 0, label: "you" };
+    var v = A[M[me][1].toLowerCase()] || { followers: [], following: [] };
+    var theyFollow = a.following.indexOf(me) >= 0 || (ai !== undefined && v.followers.indexOf(ai) >= 0);
+    var youFollow = a.followers.indexOf(me) >= 0 || (ai !== undefined && v.following.indexOf(ai) >= 0);
+    if (theyFollow && youFollow) return { ring: 1, label: "mutual" };
+    if (youFollow) return { ring: 2, label: "you follow" };
+    if (theyFollow) return { ring: 2, label: "follows you" };
+    return { ring: 3, label: "" };
+  }
+
+  var S = { past: false, kind: "" };
+  function readHash() {
+    var p = new URLSearchParams(location.hash.slice(1));
+    S.past = p.get("past") === "1"; S.kind = p.get("kind") || "";
+    var h = p.get("me"); if (h) setMe(h, false);
+  }
+  function writeHash() {
+    var p = new URLSearchParams();
+    if (me !== null) p.set("me", M[me][1]);
+    if (S.kind) p.set("kind", S.kind);
+    if (S.past) p.set("past", "1");
+    history.replaceState(null, "", p.toString() ? "#" + p : location.pathname);
+  }
+  function setMe(handle, remember) {
+    handle = (handle || "").replace(/^@/, "").trim().toLowerCase();
+    me = handle in memberByHandle ? memberByHandle[handle] : null;
+    document.getElementById("status").textContent = handle && me === null ? "not a member, so no relationships shown" : "";
+    if (remember) { try { localStorage.setItem("board.me", handle); } catch (e) {} }
+    document.getElementById("me").value = handle;
+  }
+
+  function avatar(n) {
+    var initials = (n.author.name || n.author.handle || "?").split(/\s+/).map(function (w) { return w[0] || ""; }).join("").slice(0, 2).toUpperCase();
+    if (!n.author.avatar) return el("span", { "class": "initials", text: initials });
+    var img = el("img", { src: n.author.avatar, alt: "", loading: "lazy", referrerpolicy: "no-referrer" });
+    img.onerror = function () { img.replaceWith(el("span", { "class": "initials", text: initials })); };
+    return img;
+  }
+
+  function card(n) {
+    var r = rel(n), a = A[n.author.handle.toLowerCase()] || {}, u = n.uptake || {};
+    var st = [];
+    if (r.label) st.push(el("span", { "class": "rel", text: r.label }));
+    [openness(n), uptakeShort(n), n.place || ""].forEach(function (s) { if (s) st.push(el("span", { text: s })); });
+    if (!st.length) st.push(el("span", { text: fmt(n.posted_at) }));
+    var label = (LABEL[n.kind] || [KIND[n.kind] || "", KIND[n.kind] || ""])[n.side === "ask" ? 1 : 0];
+
+    var meta = [fmt(n.posted_at, true), openness(n),
+      (u.replies || u.quotes) ? (n.side === "ask" ? "answered " : "taken up ") + ((u.replies || 0) + (u.quotes || 0)) + " times in public" : (n.side === "ask" ? "no public answers yet" : "no public uptake yet"),
+      n.place || ""].filter(Boolean).join(" · ");
+    var whoLong = ["@" + n.author.handle, r.label, a.tenure ? "on X since " + a.tenure : ""].filter(Boolean).join(" · ");
+    var issue = issueBase + "?" + new URLSearchParams({ title: "Offering board: label for " + n.id, body: "Notice: " + n.url + "\nCurrent label: " + n.side + " / " + (n.kind || "") + "\n\nWhat is wrong:\n" });
+    var detail = el("div", { "class": "detail", hidden: "" }, [
+      el("p", { "class": "text", text: n.text }),
+      el("p", { "class": "meta", text: whoLong + " · " + meta }),
+      el("div", { "class": "acts" }, [
+        el("a", { "class": "act", href: n.url, target: "_blank", rel: "noopener noreferrer", text: (ACTION[n.respond] || ACTION.link).replace("{h}", n.author.handle) }),
+        el("a", { href: n.url, target: "_blank", rel: "noopener noreferrer", text: "Open on X" }),
+        el("a", { "class": "flag", href: issue, target: "_blank", rel: "noopener noreferrer", text: "not right?" })
+      ])
+    ]);
+    var art = el("article", { "class": "card" + (r.ring < 3 ? " known" : "") + (isPast(n) ? " past" : "") });
+    var hit = el("button", { "class": "hit", "aria-expanded": "false", onclick: function (e) { e.stopPropagation(); toggle(art, detail, hit); } }, [
+      el("div", { "class": "kind" }, [icon(n.kind), label]),
+      el("div", { "class": "sum", text: n.summary }),
+      el("div", { "class": "who" }, [avatar(n), el("span", { text: n.author.name })]),
+      el("div", { "class": "st" }, st)
+    ]);
+    var paper = el("div", { "class": "paper", onclick: function (e) { e.stopPropagation(); } }, [hit, detail]);
+    art.appendChild(paper);
+    return art;
+  }
+  var opened = null;
+  function closeOpen() {
+    if (!opened) return;
+    opened.art.classList.remove("open", "grow-left"); opened.detail.hidden = true; opened.hit.setAttribute("aria-expanded", "false"); opened = null;
+  }
+  function toggle(art, detail, hit) {
+    var wasOpen = art.classList.contains("open");
+    closeOpen();
+    if (wasOpen) return;
+    var grid = art.parentElement.getBoundingClientRect(), r = art.getBoundingClientRect();
+    art.style.setProperty("--gw", Math.round(grid.width) + "px");
+    art.classList.toggle("grow-left", grid.right - r.right < r.width * 0.5);
+    art.classList.add("open"); detail.hidden = false; hit.setAttribute("aria-expanded", "true");
+    opened = { art: art, detail: detail, hit: hit };
+  }
+  document.addEventListener("click", closeOpen);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeOpen(); });
+
+  function renderKinds() {
+    var live = N.filter(function (n) { return S.past || !isPast(n); });
+    var box = document.getElementById("kinds"); box.innerHTML = "";
+    var items = [{ id: "", label: "All" }].concat(D.kinds || []);
+    items.forEach(function (k) {
+      var n = k.id ? live.filter(function (x) { return x.kind === k.id; }).length : live.length;
+      if (k.id && !n) return;
+      box.appendChild(el("button", { "aria-pressed": S.kind === k.id, onclick: function () { S.kind = S.kind === k.id ? "" : k.id; render(); } },
+        [k.id ? icon(k.id) : null, k.label, el("span", { "class": "n", text: n })]));
+    });
+  }
+  function render() {
+    writeHash();
+    document.getElementById("past").checked = S.past;
+    renderKinds();
+    ["offer", "ask"].forEach(function (side) {
+      var list = N.filter(function (n) { return n.side === side && (S.past || !isPast(n)) && (!S.kind || n.kind === S.kind); });
+      list.sort(function (a, b) { return (b.posted_at || "").localeCompare(a.posted_at || ""); });
+      list.sort(function (a, b) { return isPast(a) - isPast(b) || rel(a).ring - rel(b).ring; });
+      var box = document.getElementById("c-" + side); box.innerHTML = "";
+      list.forEach(function (n) { box.appendChild(card(n)); });
+      if (!list.length) box.appendChild(el("p", { "class": "empty", text: side === "ask" ? "Nothing wanted right now." : "Nothing offered right now." }));
+      document.getElementById("n-" + side).textContent = list.length;
+    });
+    renderRecord();
+  }
+  function renderRecord() {
+    var box = document.getElementById("record");
+    if (me === null) { box.hidden = true; return; }
+    var handle = M[me][1].toLowerCase();
+    var mine = N.filter(function (n) { return n.author.handle.toLowerCase() === handle; });
+    var offered = mine.filter(function (n) { return n.side === "offer"; }).length;
+    var taken = mine.reduce(function (s, n) { return s + ((n.uptake || {}).replies || 0) + ((n.uptake || {}).quotes || 0); }, 0);
+    var answered = N.filter(function (n) { return (n.uptake || {}).repliers && n.uptake.repliers.indexOf(me) >= 0 && n.author.handle.toLowerCase() !== handle; }).length;
+    box.hidden = false; box.innerHTML = "";
+    box.appendChild(el("b", { text: "Your record: " }));
+    box.appendChild(document.createTextNode("offered " + offered + ", asked " + (mine.length - offered) + ", your notices taken up " + taken + "× in public, you answered " + answered + " of others'. Computed from public replies; shown only for the handle entered here."));
+  }
+
+  document.getElementById("me").addEventListener("change", function (e) { setMe(e.target.value, true); render(); });
+  document.getElementById("me").addEventListener("keydown", function (e) { if (e.key === "Enter") { setMe(e.target.value, true); render(); } });
+  document.getElementById("past").addEventListener("change", function (e) { S.past = e.target.checked; render(); });
+  window.addEventListener("hashchange", function () { readHash(); render(); });
+
+  var sides = { offer: 0, ask: 0 }; N.forEach(function (n) { sides[n.side] = (sides[n.side] || 0) + 1; });
+  document.getElementById("gen").textContent = sides.offer + " offers and " + sides.ask + " asks from " + M.length + " members. Reviewed by " + (D.review || "hand") + ". Generated " + fmt(D.generated_at, true) + ".";
+  readHash();
+  if (me === null) { try { var saved = localStorage.getItem("board.me"); if (saved) setMe(saved, false); } catch (e) {} }
+  render();
+})();
+</script>

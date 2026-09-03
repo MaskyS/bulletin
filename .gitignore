@@ -1,0 +1,5 @@
+.env
+data/dump/*.parquet
+data/dump/export_id
+data/batches/
+__pycache__/
