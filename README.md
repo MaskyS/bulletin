@@ -1,4 +1,4 @@
-# The Offering Board
+# Bulletin
 
 A notice board for members of the Community Archive: what they have offered each other and
 asked each other for, collected from their own tweets. Enter a handle and notices from people

@@ -121,8 +121,8 @@ def main():
         "source": {
             "corpus": "Community Archive",
             "retrievers": sorted({s.split(":")[0] for n in notices for s in n["signals"]}),
-            "labels_repo": "TheExGenesis/community-archive",
-            "labels_path": "prototypes/offering-board/data/labels.json",
+            "labels_repo": "MaskyS/bulletin",
+            "labels_path": "data/labels.json",
         },
         "review": "hand" if all((labels.get(n["id"]) or {}).get("by", "hand") == "hand" for n in notices) else "model",
         "kinds": KINDS,

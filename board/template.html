@@ -1,4 +1,4 @@
-<title>The Offering Board</title>
+<title>Bulletin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap">
@@ -90,7 +90,7 @@
 
 <div class="page">
   <header>
-    <h1>The Offering Board</h1>
+    <h1>Bulletin</h1>
     <p class="dek">What Community Archive members have offered each other, and asked for.</p>
   </header>
   <div class="bar">
@@ -229,7 +229,7 @@
       (u.replies || u.quotes) ? (n.side === "ask" ? "answered " : "taken up ") + ((u.replies || 0) + (u.quotes || 0)) + " times in public" : (n.side === "ask" ? "no public answers yet" : "no public uptake yet"),
       n.place || ""].filter(Boolean).join(" · ");
     var whoLong = ["@" + n.author.handle, r.label, a.tenure ? "on X since " + a.tenure : ""].filter(Boolean).join(" · ");
-    var issue = issueBase + "?" + new URLSearchParams({ title: "Offering board: label for " + n.id, body: "Notice: " + n.url + "\nCurrent label: " + n.side + " / " + (n.kind || "") + "\n\nWhat is wrong:\n" });
+    var issue = issueBase + "?" + new URLSearchParams({ title: "Bulletin: label for " + n.id, body: "Notice: " + n.url + "\nCurrent label: " + n.side + " / " + (n.kind || "") + "\n\nWhat is wrong:\n" });
     var detail = el("div", { "class": "detail", hidden: "" }, [
       el("p", { "class": "text", text: n.text }),
       el("p", { "class": "meta", text: whoLong + " · " + meta }),
