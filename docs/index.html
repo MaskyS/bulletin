@@ -11,20 +11,20 @@
 <style>
   :root{
     color-scheme:light;
-    --bg:#E9E8E1; --card:#F8F7F2; --card-2:#F1F0EA; --line:rgba(27,35,54,.15); --line-2:rgba(27,35,54,.08);
-    --text:#1B2336; --text-2:#5B6274; --text-3:#8F94A3; --accent:#B8371A;
+    --bg:#FFFFFF; --card:#F4F4F5; --card-2:#EAEAEC; --line:#E4E4E7; --line-2:#ECECEF;
+    --text:#09090B; --text-2:#71717A; --text-3:#9A9AA3; --accent:#B8371A;
   }
   @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]){
       color-scheme:dark;
-      --bg:#131519; --card:#1E2128; --card-2:#252932; --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.06);
-      --text:#E4E1D8; --text-2:#A3A8B4; --text-3:#6F7583; --accent:#F27B5B;
+      --bg:#111113; --card:#1B1B1F; --card-2:#232327; --line:#2A2A2E; --line-2:#202024;
+      --text:#F5F5F5; --text-2:#A7A7AF; --text-3:#6E6E76; --accent:#F27B5B;
     }
   }
   :root[data-theme="dark"]{
     color-scheme:dark;
-    --bg:#131519; --card:#1E2128; --card-2:#252932; --line:rgba(255,255,255,.12); --line-2:rgba(255,255,255,.06);
-    --text:#E4E1D8; --text-2:#A3A8B4; --text-3:#6F7583; --accent:#F27B5B;
+    --bg:#111113; --card:#1B1B1F; --card-2:#232327; --line:#2A2A2E; --line-2:#202024;
+    --text:#F5F5F5; --text-2:#A7A7AF; --text-3:#6E6E76; --accent:#F27B5B;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Manrope",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -112,8 +112,8 @@
   <div class="kinds" id="kinds" role="group" aria-label="Filter by kind"></div>
 
   <div class="board">
-    <section class="col" aria-labelledby="h-offer"><h2 id="h-offer">Offered <span class="n" id="n-offer"></span></h2><div class="cards" id="c-offer"></div></section>
-    <section class="col" aria-labelledby="h-ask"><h2 id="h-ask">Wanted <span class="n" id="n-ask"></span></h2><div class="cards" id="c-ask"></div></section>
+    <section class="col" aria-labelledby="h-offer"><h2 id="h-offer">Offers <span class="n" id="n-offer"></span></h2><div class="cards" id="c-offer"></div></section>
+    <section class="col" aria-labelledby="h-ask"><h2 id="h-ask">Asks <span class="n" id="n-ask"></span></h2><div class="cards" id="c-ask"></div></section>
   </div>
 
   <footer>
@@ -30599,7 +30599,7 @@
       list.sort(function (a, b) { return isPast(a) - isPast(b) || rel(a).ring - rel(b).ring; });
       var box = document.getElementById("c-" + side); box.innerHTML = "";
       list.forEach(function (n) { box.appendChild(card(n)); });
-      if (!list.length) box.appendChild(el("p", { "class": "empty", text: side === "ask" ? "Nothing wanted right now." : "Nothing offered right now." }));
+      if (!list.length) box.appendChild(el("p", { "class": "empty", text: side === "ask" ? "No asks right now." : "No offers right now." }));
       document.getElementById("n-" + side).textContent = list.length;
     });
     renderRecord();
